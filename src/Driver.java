@@ -2,6 +2,7 @@ import network.query.MySQLAccess;
 import network.util.ConnectionConfiguration;
 
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
@@ -36,8 +37,19 @@ public class Driver
         }
 
 
-        MySQLAccess con = new MySQLAccess();
-        con.insert();
+        //String message1 = MySQLAccess.register("michal", "email@email.com");
+        //String message = MySQLAccess.deRegister("michal");
+        //String message2 = MySQLAccess.postProfile("test","montreal","hockey");
+        //ResultSet tester = MySQLAccess.showPublishers();
+        //String message = MySQLAccess.deRegister("test");
+       // MySQLAccess.register("test1", "test@test.com");
+        //MySQLAccess.postTwibble("michel","fgfg");
+        //String follow = MySQLAccess.subscribe("michal", "test");
+        //String delete =MySQLAccess.deleteTwibble("michal", 1);
+        //String error = MySQLAccess.unSubscribe("michal", "test");
+        //String update = MySQLAccess.updateProfile("michal", "allo", "wut");
+        String login = MySQLAccess.login("michal");
+       System.out.println(login);
 
     }
 }

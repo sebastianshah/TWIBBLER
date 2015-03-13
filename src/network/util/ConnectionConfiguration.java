@@ -11,7 +11,7 @@ public class ConnectionConfiguration {
     //configuration setting
     private String username = "root";
     private String password = "";
-    private String table ="twibblersql";
+    private String table ="twibblerdata";
 
     public  Connection getConnection()
     {
