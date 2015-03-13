@@ -302,9 +302,12 @@ public class MySQLAccess
             statement.setString(1,username);
             ResultSet result = statement.executeQuery();
             int count =0;
-            result.last();
-            count =  result.getInt("id");
-            System.out.println(count);
+            if(result.isBeforeFirst())
+            {
+                result.last();
+                count =  result.getInt("id");
+                System.out.println(count);
+            }
             //end
 
             String query = "INSERT INTO twibblerdata.twibble(username, datetime, content, id)" +"VALUES(?,?,?,?)";
@@ -322,6 +325,8 @@ public class MySQLAccess
 
             //result message
             message = "twibble was successfully posted";
+
+
 
         }catch (SQLException e){
             e.printStackTrace();
@@ -491,6 +496,82 @@ public class MySQLAccess
         }
         return message;
     }
+    public static String getSubscribers(String username)
+    {
+        Connection  con =null;
+        PreparedStatement statement = null;
+        ConnectionConfiguration connect = new ConnectionConfiguration();
+        String result = "";
 
+        try{
+            String query = "SELECT email " +
+                            "FROM users"+
+                            " JOIN subscription " +
+                            " ON subscription.Subscriber_username = USERS.username" +
+                            " WHERE Publisher_username =?";
+            con = connect.getConnection();
 
+            statement = con.prepareStatement(query);
+            statement.setString(1,username);
+            ResultSet set = statement.executeQuery();
+
+            while(set.next())
+            {
+                System.out.println(set.getString("email"));
+                result += set.getString("email")+",";
+            }
+
+        }catch (SQLException e){
+            //e.printStackTrace();
+        }finally {
+            try {
+                if (con != null) {
+                    con.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return result;
+    }
+
+    public static ResultSet getProfiles()
+    {
+        Connection  con =null;
+        PreparedStatement statement = null;
+        ConnectionConfiguration connect = new ConnectionConfiguration();
+
+        java.util.Date date = new java.util.Date();
+        ResultSet queryResult = null;
+
+        try{
+            String query = "SELECT *  FROM twibblerdata.profile";
+            con = connect.getConnection();
+
+            statement = con.prepareStatement(query);
+            queryResult = statement.executeQuery();
+
+            //  TODO the return give a ResultSet object which the client will need to while output
+            //For testing
+            while(queryResult.next()){
+                System.out.print(queryResult.getString("username"));
+                System.out.print(queryResult.getString("location"));
+                System.out.print(queryResult.getString("interest")+"\n");
+            }
+
+            //result message
+
+        }catch (SQLException e){
+            //e.printStackTrace();
+        }finally {
+            try {
+                if (con != null) {
+                    con.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return queryResult;
+    }
 }

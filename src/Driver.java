@@ -1,9 +1,11 @@
 import network.query.MySQLAccess;
 import network.util.ConnectionConfiguration;
+import network.util.Email;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.*;
 
 /**
  * Created by michal on 3/9/2015.
@@ -42,14 +44,30 @@ public class Driver
         //String message2 = MySQLAccess.postProfile("test","montreal","hockey");
         //ResultSet tester = MySQLAccess.showPublishers();
         //String message = MySQLAccess.deRegister("test");
-       // MySQLAccess.register("test1", "test@test.com");
+        //MySQLAccess.register("bob", "michalwozniak@live.ca");
+        //MySQLAccess.register("robert","michalwozniak06@gmail.com");
+        //MySQLAccess.register("steve","michalwozniak06@gmail.com");
+
+        //String message2 = MySQLAccess.postProfile("bob","montreal","hockey");
         //MySQLAccess.postTwibble("michel","fgfg");
-        //String follow = MySQLAccess.subscribe("michal", "test");
+        //String follow = MySQLAccess.subscribe("steve", "wozniak");
         //String delete =MySQLAccess.deleteTwibble("michal", 1);
         //String error = MySQLAccess.unSubscribe("michal", "test");
         //String update = MySQLAccess.updateProfile("michal", "allo", "wut");
-        String login = MySQLAccess.login("michal");
-       System.out.println(login);
+        //String login = MySQLAccess.login("michal");
+       //System.out.println(login);
+
+        //MySQLAccess.getSubscribers("wozniak");
+
+        //email
+        //Properties properties = System.getProperties();
+        // Configure mail server
+        //properties.put("mail.smtp.starttls.enable", "true");
+        //properties.put("mail.smtp.auth", "true");
+        //Email.sendEmail(properties, "wozniak");
+        MySQLAccess.postTwibble("bob","hello this is a twib");
+        MySQLAccess.getProfiles();
+
 
     }
 }
