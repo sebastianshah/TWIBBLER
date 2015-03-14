@@ -38,7 +38,8 @@ public class Driver
             }
         }
 
-
+        
+         
         //String message1 = MySQLAccess.register("michal", "email@email.com");
         //String message = MySQLAccess.deRegister("michal");
         //String message2 = MySQLAccess.postProfile("test","montreal","hockey");
@@ -65,9 +66,12 @@ public class Driver
         //properties.put("mail.smtp.starttls.enable", "true");
         //properties.put("mail.smtp.auth", "true");
         //Email.sendEmail(properties, "wozniak");
-        MySQLAccess.postTwibble("bob","hello this is a twib");
-        MySQLAccess.getProfiles();
-
+        //MySQLAccess.postTwibble("bob","hello this is a twib");
+        //MySQLAccess.getProfiles();
+        
+        String mess = MySQLAccess.login("mv740");
+        System.out.print(mess);
+        
 
     }
 }

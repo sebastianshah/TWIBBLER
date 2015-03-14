@@ -2,9 +2,11 @@ package network.query;
 
 
 import com.sun.xml.internal.bind.v2.TODO;
+
 import network.util.ConnectionConfiguration;
 
 import javax.jws.soap.SOAPBinding;
+
 import java.sql.*;
 
 
@@ -15,6 +17,9 @@ import java.sql.*;
 public class MySQLAccess
 {
 
+	StringBuilder test = new StringBuilder();
+	
+	
     public static String login(String username)
     {
         Connection  con =null;
@@ -27,21 +32,27 @@ public class MySQLAccess
             con = connect.getConnection();
 
             //check if user has a profile
-            String queryCheck = "SELECT username FROM profile WHERE username = ? ";
+            String queryCheck = "SELECT `username` FROM `users` WHERE `username` = ? ";
             statement = con.prepareStatement(queryCheck);
             statement.setString(1,username);
             ResultSet result = statement.executeQuery();
-
+            
             //user exist
             if(result.isBeforeFirst())
             {
+            	//while(result.next())
+                //{
+                //	System.out.println(result.getString("username"));
+                //}
                 //result message
                 message = "Successful login";
             }
             else
             {
+            	
                 //write to log error message
                 message = "ERROR :"+username+" not in database ";
+                MySQLAccess.errorLog(username, message);
             }
 
         }catch (SQLException e){
@@ -90,7 +101,7 @@ public class MySQLAccess
             statement.executeUpdate();
 
             //result message
-            message = "Registration was successful";
+            message = "Successful registration";
 
 
         }catch (SQLException e)
@@ -180,7 +191,7 @@ public class MySQLAccess
             message = "profile was successfully created";
 
         }catch (SQLException e){
-            //e.printStackTrace();
+            e.printStackTrace();
             String error = e.getMessage();
             //write to log error message
             message = "FAILURE : there was a error that stopped the profile from being created";
@@ -239,29 +250,27 @@ public class MySQLAccess
      * Check database for users with a profile and return
      * @return users that have a profile
      */
-    public static ResultSet showPublishers()
+    public static String showPublishers()
     {
         Connection  con =null;
         PreparedStatement statement = null;
         ConnectionConfiguration connect = new ConnectionConfiguration();
-
-        java.util.Date date = new java.util.Date();
-        ResultSet queryResult = null;
+        String message ="";
 
         try{
             String query = "SELECT username  FROM twibblerdata.profile";
             con = connect.getConnection();
 
             statement = con.prepareStatement(query);
-            queryResult = statement.executeQuery();
+            ResultSet queryResult = statement.executeQuery();
 
-            //  TODO the return give a ResultSet object which the client will need to while output
-            //For testing
-            /*while(queryResult.next()){
-                System.out.print(queryResult.getString("username"));
-            }*/
+            while(queryResult.next())
+            {
+                System.out.println(queryResult.getString("email"));
+                message += queryResult.getString("username")+"\n";
+            }
 
-            //result message
+            
 
         }catch (SQLException e){
             //e.printStackTrace();
@@ -274,7 +283,7 @@ public class MySQLAccess
                 e.printStackTrace();
             }
         }
-        return queryResult;
+        return message;
     }
 
     // TODO must then send email to all subcriber
@@ -541,7 +550,6 @@ public class MySQLAccess
         PreparedStatement statement = null;
         ConnectionConfiguration connect = new ConnectionConfiguration();
 
-        java.util.Date date = new java.util.Date();
         ResultSet queryResult = null;
 
         try{
@@ -574,4 +582,37 @@ public class MySQLAccess
         }
         return queryResult;
     }
+    
+    public static void errorLog(String username, String error)
+    {
+    	Connection  con =null;
+        PreparedStatement statement = null;
+        java.util.Date date = new java.util.Date();
+        ConnectionConfiguration connect = new ConnectionConfiguration();
+
+        try{
+            String query = "INSERT INTO log(Username, Message, DateTime)" +"VALUES(?,?,?)";
+            con = connect.getConnection();
+
+            statement = con.prepareStatement(query);
+            statement.setString(1, username);
+            statement.setString(2, error);
+            statement.setTimestamp(3, new Timestamp(date.getTime()));         
+            statement.executeUpdate();
+
+
+
+        }catch (SQLException e){
+            e.printStackTrace();
+        }finally {
+            try {
+                if (con != null) {
+                    con.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }
+
