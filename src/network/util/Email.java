@@ -24,8 +24,12 @@ import javax.mail.internet.*;
 import javax.activation.*;
 
 public class Email
+
 {
-    public static void sendEmail(Properties properties, String user, String twibblerMessage)
+	
+	public static Properties properties = null;
+	
+    public static void sendEmail(String user, String twibblerMessage)
     {
 
 

@@ -75,7 +75,9 @@ public class ClientRequestGenerator {
 				//TODO: 255 char max
 				
 				System.out.println("Enter Twibble: ");
-				String twibble = kb.next();
+				kb.nextLine();
+				String twibble = kb.nextLine();
+	
 				
 				outputRequest.setContent(twibble);
 				

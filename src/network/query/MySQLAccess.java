@@ -1,11 +1,11 @@
 package network.query;
 
 
-import com.sun.xml.internal.bind.v2.TODO;
+
 
 import network.util.ConnectionConfiguration;
 
-import javax.jws.soap.SOAPBinding;
+
 
 import java.sql.*;
 
@@ -52,7 +52,7 @@ public class MySQLAccess
             	
                 //write to log error message
                 message = "ERROR :"+username+" not in database ";
-                MySQLAccess.errorLog(username, message);
+                
             }
 
         }catch (SQLException e){
@@ -109,7 +109,7 @@ public class MySQLAccess
             //e.printStackTrace();
             String error = e.getMessage();
             //write to log error message
-            message = "Registration has failed : user " + username +" already exist!";
+            message = "ERROR Registration has failed -> user " + username +" already exist!";
         }finally {
             try {
                 if (con != null) {
@@ -150,7 +150,7 @@ public class MySQLAccess
             //e.printStackTrace();
             String error = e.getMessage();
             //write to log error message
-            message = "Deregistration has failed";
+            message = "ERROR :Deregistration has failed";
         }finally {
             try {
                 if (con != null) {
@@ -194,7 +194,7 @@ public class MySQLAccess
             e.printStackTrace();
             String error = e.getMessage();
             //write to log error message
-            message = "FAILURE : there was a error that stopped the profile from being created";
+            message = "ERROR : there was a error that stopped the profile from being created";
         }finally {
             try {
                 if (con != null) {
@@ -207,6 +207,10 @@ public class MySQLAccess
         return message;
     }
 
+    /**
+    * add new entry into profile database
+    * @return successful/failure message
+    */
     public static String updateProfile(String username, String location, String interest)
     {
         Connection  con =null;
@@ -245,12 +249,56 @@ public class MySQLAccess
         }
         return message;
     }
+    
+    /**
+     * show all available profile
+     * @return Resultset object that contain all the rows with each user's information
+     */
+    public static ResultSet showAllProfile()
+    {
+        Connection  con =null;
+        PreparedStatement statement = null;
+        ConnectionConfiguration connect = new ConnectionConfiguration();
+
+        ResultSet message = null;
+
+        try{
+            String query = "SELECT * FROM profile";
+            con = connect.getConnection();
+            
+            statement = con.prepareStatement(query);
+            message = statement.executeQuery();
+            
+            //get output
+            //while(message.next())
+            //{
+            //	String username = message.getString("username");
+            //	String location = message.getString("location");
+            //	String interest = message.getString("interest");
+            //}
+            
+
+        }catch (SQLException e){
+            //e.printStackTrace();
+            //String error = e.getMessage();
+
+        }finally {
+            try {
+                if (con != null) {
+                    con.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return message;
+    }
 
     /**
      * Check database for users with a profile and return
      * @return users that have a profile
      */
-    public static String showPublishers()
+    public static String showPublishers(String username)
     {
         Connection  con =null;
         PreparedStatement statement = null;
@@ -258,16 +306,22 @@ public class MySQLAccess
         String message ="";
 
         try{
-            String query = "SELECT username  FROM twibblerdata.profile";
+        	//SELECT * FROM `profile`
+            String query = "SELECT username FROM profile WHERE username !=? ";
             con = connect.getConnection();
 
             statement = con.prepareStatement(query);
+            statement.setString(1, username);
             ResultSet queryResult = statement.executeQuery();
 
             while(queryResult.next())
             {
-                System.out.println(queryResult.getString("email"));
+                System.out.println(queryResult.getString("username"));
                 message += queryResult.getString("username")+"\n";
+            }
+            if(message.isEmpty())
+            {
+            	message = "There is no publisher available!";
             }
 
             
@@ -320,7 +374,8 @@ public class MySQLAccess
             //end
 
             String query = "INSERT INTO twibblerdata.twibble(username, datetime, content, id)" +"VALUES(?,?,?,?)";
-
+            String mess = content;
+            System.out.println(mess);
             statement = con.prepareStatement(query);
             statement.setString(1,username);
             statement.setTimestamp(2, new Timestamp(date.getTime()));
@@ -583,7 +638,7 @@ public class MySQLAccess
         return queryResult;
     }
     
-    public static void errorLog(String username, String error)
+    public static void writeLog(String username,String message)
     {
     	Connection  con =null;
         PreparedStatement statement = null;
@@ -596,7 +651,7 @@ public class MySQLAccess
 
             statement = con.prepareStatement(query);
             statement.setString(1, username);
-            statement.setString(2, error);
+            statement.setString(2, message);
             statement.setTimestamp(3, new Timestamp(date.getTime()));         
             statement.executeUpdate();
 
@@ -614,5 +669,7 @@ public class MySQLAccess
             }
         }
     }
+    
+
 }
 

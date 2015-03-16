@@ -7,6 +7,7 @@ import java.net.Socket;
 import java.util.Properties;
 
 import network.util.Connection;
+import network.util.Email;
 
 
 
@@ -20,10 +21,11 @@ public class TwibblerServer {
 		
 		//TODO fix the server email 
 		//email
-        //Properties properties = System.getProperties();
+        Properties properties = System.getProperties();
         // Configure mail server
-        //properties.put("mail.smtp.starttls.enable", "true");
-        //properties.put("mail.smtp.auth", "true");
+        properties.put("mail.smtp.starttls.enable", "true");
+        properties.put("mail.smtp.auth", "true");
+        Email.properties = properties;
 		
 		
 		try{ 
