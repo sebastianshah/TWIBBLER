@@ -9,6 +9,7 @@ import java.net.Socket;
 
 import network.handler.ServerRequestHandler;
 import network.handler.WebRequestHandler;
+import network.query.MySQLAccess;
 
 //thread for handling communication with client 
 //invokes ServerRequestHandler to handle requests + response 
@@ -22,7 +23,7 @@ public class Connection extends Thread {
 	public Connection(Socket client)  { 
 		netClient = client; 
 		try { 
-			System.out.println("try-object-test-id:"+Thread.currentThread().getId());
+			//System.out.println("try-object-test-id:"+Thread.currentThread().getId());
 			
 			fromClient = new ObjectInputStream(netClient.getInputStream());
 			toClient = new ObjectOutputStream(netClient.getOutputStream());
@@ -52,11 +53,9 @@ public class Connection extends Thread {
 			Object in;
 			TwibblerMessage inputRequest;
 			TwibblerMessage outputResponse;
-			System.out.println("testrun"+Thread.currentThread().getId());
+
 			// Read requests from the client and send response
 			while((in = fromClient.readObject()) != null){
-				System.out.println("test11111");
-				System.out.println(in.getClass());
 				inputRequest = (TwibblerMessage) in;
 				
 				System.out.println ("Twibbler Server has received request from the client"); 
@@ -73,7 +72,6 @@ public class Connection extends Thread {
 			netClient.close(); 
 		}catch(NullPointerException e){
 			String web = new String();
-			System.out.println("nullpointert-catch"+Thread.currentThread().getId());
 
             try {
                 if((web = fromWeb.readLine()) != null)
@@ -89,11 +87,13 @@ public class Connection extends Thread {
                 	//search query
                 	if(web.contains("user="))
                 	{
-                        toWeb.println(WebRequestHandler.getProfiles(web));
+                        toWeb.println(WebRequestHandler.getTwibbles(web, username));
+                        MySQLAccess.writeLog("WebBrowser-Request", "Successful print all twibbles");
                 	}
                     else
                     {
-                        toWeb.println(WebRequestHandler.getTwibblers());
+                        toWeb.println(WebRequestHandler.getProfiles());
+                        MySQLAccess.writeLog("WebBrowser-Request", "Successful print all Profiles");
                     }
 
                 }

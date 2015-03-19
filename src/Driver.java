@@ -1,5 +1,5 @@
 import network.query.MySQLAccess;
-import network.util.ConnectionConfiguration;
+import network.util.SQLConnectionConfiguration;
 import network.util.Email;
 
 import java.sql.Connection;
@@ -9,13 +9,17 @@ import java.util.*;
 
 /**
  * Created by michal on 3/9/2015.
+ *
+ * DRIVER IS USED FOR TESTING PURPOSES ONLY
+ *
+ *
  */
 public class Driver
 {
     public static void main(String[] args){
         System.out.println("hello");
 
-        ConnectionConfiguration connect = new ConnectionConfiguration();
+        SQLConnectionConfiguration connect = new SQLConnectionConfiguration();
         Connection connection = null;
 
         try{
