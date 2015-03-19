@@ -16,10 +16,11 @@ import network.util.Email;
 public class TwibblerServer {
 
 	public static void main(String[] args) {
+
+
 		ServerSocket serverSocket = null;
 		int serverPort = 9000;
 		
-		//TODO fix the server email 
 		//email
         Properties properties = System.getProperties();
         // Configure mail server

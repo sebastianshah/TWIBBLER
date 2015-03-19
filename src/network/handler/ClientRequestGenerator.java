@@ -1,8 +1,9 @@
-package network.util;
+package network.handler;
 import java.util.Properties;
 import java.util.Scanner;
 
 import network.query.MySQLAccess;
+import network.util.TwibblerMessage;
 
 
 public class ClientRequestGenerator {

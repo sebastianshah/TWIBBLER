@@ -48,11 +48,11 @@ public class Email
         String username = "michalwozniak06@gmail.com";
         String password = "Wozm__69";
 
-
+        System.out.println("email stage 1");
 
         // Recipient's email ID needs to be mentioned.
         //String to = "michalwozniak06@gmail.com, michalwozniak@Live.ca";
-        String to = MySQLAccess.getSubscribers(user);
+        String to = MySQLAccess.getSubscribers(user);// "michalwozniak06@gmail.com";
 
         //pass from server to here
 
@@ -64,14 +64,14 @@ public class Email
         //properties.put("mail.smtp.auth", "true");
 
         Session session = Session.getInstance(properties);
-
+        System.out.println("email stage 2");
         try{
             // Create a default MimeMessage object.
             MimeMessage message = new MimeMessage(session);
 
             // Set From: header field of the header.
             message.setFrom(new InternetAddress(from));
-
+            System.out.println("email stage 3");
             // Set To: header field of the header.
             //message.addRecipient(Message.RecipientType.TO,
             //        new InternetAddress(to));
@@ -94,16 +94,22 @@ public class Email
 
             // Now set the actual message
             message.setText(twibblerMessage);
-
+            System.out.println("email stage 4");
             // Connect to server and send message
             Transport transport = session.getTransport("smtp");
+            System.out.println("email stage 5");
             transport.connect(host, port, username, password);
+            System.out.println("working email");
             transport.sendMessage(message, message.getAllRecipients());
             transport.close();
 
             System.out.println("Sent message successfully....");
         }catch (MessagingException mex) {
             mex.printStackTrace();
+        }
+        catch (NullPointerException e)
+        {
+            e.printStackTrace();
         }
     }
 }

@@ -6,7 +6,7 @@ import java.sql.DriverManager;
 /**
  * Created by michal on 3/9/2015.
  */
-public class ConnectionConfiguration {
+public class SQLConnectionConfiguration {
 
     //configuration setting
     private String username = "root";

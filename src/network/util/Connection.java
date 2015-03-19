@@ -4,11 +4,11 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.PrintStream;
 import java.io.PrintWriter;
-import java.io.Serializable;
-import java.net.ServerSocket; 
 import java.net.Socket;
+
+import network.handler.ServerRequestHandler;
+import network.handler.WebRequestHandler;
 
 //thread for handling communication with client 
 //invokes ServerRequestHandler to handle requests + response 
@@ -16,15 +16,28 @@ public class Connection extends Thread {
 	protected Socket netClient; 
 	protected ObjectInputStream fromClient; 
 	protected ObjectOutputStream toClient; 
+	protected BufferedReader fromWeb;
+	protected PrintWriter toWeb;
 	
-	public Connection(Socket client) { 
+	public Connection(Socket client)  { 
 		netClient = client; 
 		try { 
+			System.out.println("try-object-test-id:"+Thread.currentThread().getId());
+			
 			fromClient = new ObjectInputStream(netClient.getInputStream());
 			toClient = new ObjectOutputStream(netClient.getOutputStream());
 		} catch(IOException e) { 
 			try { 
-				netClient.close(); 
+				
+				fromWeb = new BufferedReader(new InputStreamReader(netClient.getInputStream()));
+				toWeb = new PrintWriter(netClient.getOutputStream(),true);
+				
+				System.out.println("netclient.close");
+				//System.out.println(e.getMessage());
+				//	netClient.close();
+			
+				
+				 
 			}catch(IOException e1) { 
 				System.out.println("Fail could not set up streams " + e.getMessage());
 				return; 
@@ -39,14 +52,15 @@ public class Connection extends Thread {
 			Object in;
 			TwibblerMessage inputRequest;
 			TwibblerMessage outputResponse;
-			
+			System.out.println("testrun"+Thread.currentThread().getId());
 			// Read requests from the client and send response
 			while((in = fromClient.readObject()) != null){
-				
+				System.out.println("test11111");
+				System.out.println(in.getClass());
 				inputRequest = (TwibblerMessage) in;
 				
 				System.out.println ("Twibbler Server has received request from the client"); 
-		       	System.out.println(inputRequest.getUsername());
+		       	System.out.println("username: "+inputRequest.getUsername());
 	
 		       	//Invoke Request Handler
 		       	outputResponse = ServerRequestHandler.getResponse(inputRequest);
@@ -57,10 +71,43 @@ public class Connection extends Thread {
 			fromClient.close();
 			toClient.close();
 			netClient.close(); 
-		}catch(IOException e){
-			System.out.println("Fail could read line " + e.getMessage());
-		}catch(ClassNotFoundException e) {
-			System.out.println("Fail could class not found " + e.getMessage());
-		}
-	}
+		}catch(NullPointerException e){
+			String web = new String();
+			System.out.println("nullpointert-catch"+Thread.currentThread().getId());
+
+            try {
+                if((web = fromWeb.readLine()) != null)
+                {
+
+                	//System.out.println(web.toString());
+                	int indexEnd = web.indexOf("H");
+                	int indexB = web.indexOf("=");
+                	//System.out.println(web.substring(indexB+1, indexEnd-1));
+                	String username = web.substring(indexB+1, indexEnd-1);
+
+
+                	//search query
+                	if(web.contains("user="))
+                	{
+                        toWeb.println(WebRequestHandler.getProfiles(web));
+                	}
+                    else
+                    {
+                        toWeb.println(WebRequestHandler.getTwibblers());
+                    }
+
+                }
+                //fromWeb.close();
+                //toWeb.close();
+                netClient.close();
+
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
+		} catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }

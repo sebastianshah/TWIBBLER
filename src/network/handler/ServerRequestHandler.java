@@ -1,4 +1,4 @@
-package network.util;
+package network.handler;
 
 import java.io.BufferedReader;
 import java.io.PrintWriter;
@@ -6,6 +6,8 @@ import java.net.Socket;
 import java.util.Properties;
 
 import network.query.MySQLAccess;
+import network.util.Email;
+import network.util.TwibblerMessage;
 
 
 public class ServerRequestHandler {
@@ -127,7 +129,12 @@ public class ServerRequestHandler {
 		outputResponse.setContent(MySQLAccess.postTwibble(inputRequest.getUsername(), inputRequest.getContent()));
 		MySQLAccess.writeLog(inputRequest.getUsername(), outputResponse.getContent());
 
-		Email.sendEmail(inputRequest.getUsername(), inputRequest.getContent());
+        //if user has subscriber then send mail
+        if(MySQLAccess.getSubscribers(inputRequest.getUsername()).length() !=0)
+        {
+            Email.sendEmail(inputRequest.getUsername(), inputRequest.getContent());
+        }
+
 		
 		return outputResponse;
 	}

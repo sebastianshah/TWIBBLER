@@ -3,12 +3,15 @@ package network.query;
 
 
 
-import network.util.ConnectionConfiguration;
-
-
+import network.util.SQLConnectionConfiguration;
 
 import java.sql.*;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
 
+import network.util.Profile;
+import network.util.TwibblePost;
 
 /**
  * @author michal wozniak
@@ -24,7 +27,7 @@ public class MySQLAccess
     {
         Connection  con =null;
         PreparedStatement statement = null;
-        ConnectionConfiguration connect = new ConnectionConfiguration();
+        SQLConnectionConfiguration connect = new SQLConnectionConfiguration();
 
         String message = null;
 
@@ -81,7 +84,7 @@ public class MySQLAccess
     {
         Connection  con =null;
         PreparedStatement statement = null;
-        ConnectionConfiguration connect = new ConnectionConfiguration();
+        SQLConnectionConfiguration connect = new SQLConnectionConfiguration();
 
         String message = null;
 
@@ -131,7 +134,7 @@ public class MySQLAccess
     public static String deRegister(String username){
         Connection  con =null;
         PreparedStatement statement = null;
-        ConnectionConfiguration connect = new ConnectionConfiguration();
+        SQLConnectionConfiguration connect = new SQLConnectionConfiguration();
 
         String message = null;
 
@@ -171,7 +174,7 @@ public class MySQLAccess
     {
         Connection  con =null;
         PreparedStatement statement = null;
-        ConnectionConfiguration connect = new ConnectionConfiguration();
+        SQLConnectionConfiguration connect = new SQLConnectionConfiguration();
 
         java.util.Date date = new java.util.Date();
         String message = null;
@@ -215,7 +218,7 @@ public class MySQLAccess
     {
         Connection  con =null;
         PreparedStatement statement = null;
-        ConnectionConfiguration connect = new ConnectionConfiguration();
+        SQLConnectionConfiguration connect = new SQLConnectionConfiguration();
 
         java.util.Date date = new java.util.Date();
         String message = null;
@@ -250,49 +253,7 @@ public class MySQLAccess
         return message;
     }
     
-    /**
-     * show all available profile
-     * @return Resultset object that contain all the rows with each user's information
-     */
-    public static ResultSet showAllProfile()
-    {
-        Connection  con =null;
-        PreparedStatement statement = null;
-        ConnectionConfiguration connect = new ConnectionConfiguration();
 
-        ResultSet message = null;
-
-        try{
-            String query = "SELECT * FROM profile";
-            con = connect.getConnection();
-            
-            statement = con.prepareStatement(query);
-            message = statement.executeQuery();
-            
-            //get output
-            //while(message.next())
-            //{
-            //	String username = message.getString("username");
-            //	String location = message.getString("location");
-            //	String interest = message.getString("interest");
-            //}
-            
-
-        }catch (SQLException e){
-            //e.printStackTrace();
-            //String error = e.getMessage();
-
-        }finally {
-            try {
-                if (con != null) {
-                    con.close();
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-        return message;
-    }
 
     /**
      * Check database for users with a profile and return
@@ -302,7 +263,7 @@ public class MySQLAccess
     {
         Connection  con =null;
         PreparedStatement statement = null;
-        ConnectionConfiguration connect = new ConnectionConfiguration();
+        SQLConnectionConfiguration connect = new SQLConnectionConfiguration();
         String message ="";
 
         try{
@@ -349,7 +310,7 @@ public class MySQLAccess
     {
         Connection  con =null;
         PreparedStatement statement = null;
-        ConnectionConfiguration connect = new ConnectionConfiguration();
+        SQLConnectionConfiguration connect = new SQLConnectionConfiguration();
 
         java.util.Date date = new java.util.Date();
         String message = null;
@@ -418,7 +379,7 @@ public class MySQLAccess
     {
         Connection  con =null;
         PreparedStatement statement = null;
-        ConnectionConfiguration connect = new ConnectionConfiguration();
+        SQLConnectionConfiguration connect = new SQLConnectionConfiguration();
 
         String message = null;
 
@@ -475,7 +436,7 @@ public class MySQLAccess
     {
         Connection  con =null;
         PreparedStatement statement = null;
-        ConnectionConfiguration connect = new ConnectionConfiguration();
+        SQLConnectionConfiguration connect = new SQLConnectionConfiguration();
 
         String message = null;
 
@@ -529,7 +490,7 @@ public class MySQLAccess
     public static String deleteTwibble(String username ,int id){
         Connection  con =null;
         PreparedStatement statement = null;
-        ConnectionConfiguration connect = new ConnectionConfiguration();
+        SQLConnectionConfiguration connect = new SQLConnectionConfiguration();
         String message = null;
 
         try{
@@ -564,7 +525,7 @@ public class MySQLAccess
     {
         Connection  con =null;
         PreparedStatement statement = null;
-        ConnectionConfiguration connect = new ConnectionConfiguration();
+        SQLConnectionConfiguration connect = new SQLConnectionConfiguration();
         String result = "";
 
         try{
@@ -599,12 +560,13 @@ public class MySQLAccess
         return result;
     }
 
-    public static ResultSet getProfiles()
+    public static List<Profile> getProfiles()
     {
         Connection  con =null;
         PreparedStatement statement = null;
-        ConnectionConfiguration connect = new ConnectionConfiguration();
+        SQLConnectionConfiguration connect = new SQLConnectionConfiguration();
 
+        List<Profile> profilesList = new ArrayList<Profile>();
         ResultSet queryResult = null;
 
         try{
@@ -614,12 +576,17 @@ public class MySQLAccess
             statement = con.prepareStatement(query);
             queryResult = statement.executeQuery();
 
-            //  TODO the return give a ResultSet object which the client will need to while output
-            //For testing
+            
+            
             while(queryResult.next()){
-                System.out.print(queryResult.getString("username"));
-                System.out.print(queryResult.getString("location"));
-                System.out.print(queryResult.getString("interest")+"\n");
+            	Profile newProfile = new Profile();
+                //System.out.print(queryResult.getString("username"));
+            	newProfile.setUsername(queryResult.getString("username"));
+                //System.out.print(queryResult.getString("location"));
+            	newProfile.setLocation(queryResult.getString("location"));
+                //System.out.print(queryResult.getString("interest")+"\n");
+            	newProfile.setInterest(queryResult.getString("interest"));
+            	profilesList.add(newProfile);
             }
 
             //result message
@@ -635,7 +602,62 @@ public class MySQLAccess
                 e.printStackTrace();
             }
         }
-        return queryResult;
+        return profilesList;
+    }
+
+    public static java.util.Date timestampToUtilDate(Timestamp ts) {
+        try {
+            return new java.util.Date(ts.getTime());
+        } catch (Exception e) { return null;  }
+    }
+
+    public static List<TwibblePost> getTwibbler(String username)
+    {
+        Connection  con =null;
+        PreparedStatement statement = null;
+        SQLConnectionConfiguration connect = new SQLConnectionConfiguration();
+
+        List<TwibblePost> twibblesList = new ArrayList<TwibblePost>();
+        ResultSet queryResult = null;
+
+        try{
+            String query = "SELECT *  FROM twibblerdata.twibble WHERE username = ? ";
+            con = connect.getConnection();
+
+            statement = con.prepareStatement(query);
+            statement.setString(1, username);
+            queryResult = statement.executeQuery();
+
+            //  TODO the return give a ResultSet object which the client will need to while output
+            //For testing
+            while(queryResult.next()){
+
+                TwibblePost newPost = new TwibblePost();
+            	newPost.setUsername(queryResult.getString("Username"));
+                System.out.println(queryResult.getString("Username")+"WAT");
+            	newPost.setContent(queryResult.getString("Content"));
+                System.out.println(queryResult.getString("Content")+"watcontent");
+            	newPost.setId(queryResult.getInt("id"));
+                String date = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(queryResult.getTimestamp("DateTime"));
+            	newPost.setDatetime(date);
+
+            	twibblesList.add(newPost);
+            }
+
+            //result message
+
+        }catch (SQLException e){
+            //e.printStackTrace();
+        }finally {
+            try {
+                if (con != null) {
+                    con.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return twibblesList;
     }
     
     public static void writeLog(String username,String message)
@@ -643,7 +665,7 @@ public class MySQLAccess
     	Connection  con =null;
         PreparedStatement statement = null;
         java.util.Date date = new java.util.Date();
-        ConnectionConfiguration connect = new ConnectionConfiguration();
+        SQLConnectionConfiguration connect = new SQLConnectionConfiguration();
 
         try{
             String query = "INSERT INTO log(Username, Message, DateTime)" +"VALUES(?,?,?)";

@@ -69,9 +69,21 @@ public class Driver
         //MySQLAccess.postTwibble("bob","hello this is a twib");
         //MySQLAccess.getProfiles();
         
-        String mess = MySQLAccess.login("mv740");
-        System.out.print(mess);
-        
+        //String mess = MySQLAccess.login("mv740");
+        //System.out.print(mess);
+        MySQLAccess.getProfiles();
 
+        //email
+        Properties properties = System.getProperties();
+        // Configure mail server
+        properties.put("mail.smtp.starttls.enable", "true");
+        properties.put("mail.smtp.auth", "true");
+        properties.put("mail.smtp.port", "587");
+        Email.properties = properties;
+
+
+
+
+        Email.sendEmail("mv740","testing");
     }
 }
