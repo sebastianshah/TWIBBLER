@@ -45,14 +45,14 @@ public class Email
         // Sender's email ID needs to be mentioned
         String from = "system";
 
-        String username = "michalwozniak06@gmail.com";
-        String password = "Wozm__69";
+        String username = "twibblersystem@gmail.com";
+        String password = "twibbler_System";
 
         System.out.println("email stage 1");
 
         // Recipient's email ID needs to be mentioned.
-        //String to = "michalwozniak06@gmail.com, michalwozniak@Live.ca";
-        String to = MySQLAccess.getSubscribers(user);// "michalwozniak06@gmail.com";
+        //String to = "email@gmail.com, email@Live.ca";
+        String to = MySQLAccess.getSubscribers(user);
 
         //pass from server to here
 
