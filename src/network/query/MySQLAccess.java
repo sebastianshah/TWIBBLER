@@ -470,29 +470,46 @@ public class MySQLAccess {
         return message;
     }
 
-    public static String deleteTwibble(String username, int id) {
+    public static String deleteTwibble(String user, int id) {
         Connection con = null;
         PreparedStatement statement = null;
         SQLConnectionConfiguration connect = new SQLConnectionConfiguration();
         String message = null;
 
         try {
-            String query = "DELETE FROM twibble WHERE username= ? AND id= ?";
+
+            String queryFind = "SELECT * FROM twibble WHERE username= ? AND id= ?";
             con = connect.getConnection();
 
-            statement = con.prepareStatement(query);
-            statement.setString(1, username);
+            statement = con.prepareStatement(queryFind);
+            statement.setString(1,user);
             statement.setInt(2, id);
-            statement.executeUpdate();
+            ResultSet result = statement.executeQuery();
 
-            //result message
-            message = "twibber " + id + "  was deleted successfully";
+            System.out.println(result.toString());
+            if (result.isBeforeFirst()) {
+                // data exist
+                String query = "DELETE FROM twibble WHERE username= ? AND id= ?";
+                con = connect.getConnection();
+
+                statement = con.prepareStatement(query);
+                statement.setString(1, user);
+                statement.setInt(2, id);
+                statement.executeUpdate();
+
+                //result message
+                message = "twibber " + id + "  was deleted successfully";
+            }
+            //no data
+            else {
+                message = "ERROR : twibber " + id + "  was not found";
+            }
+
 
         } catch (SQLException e) {
             //e.printStackTrace();
             String error = e.getMessage();
-            //write to log error message
-            message = "ERROR : twibber " + id + "  was not found";
+
         } finally {
             try {
                 if (con != null) {
