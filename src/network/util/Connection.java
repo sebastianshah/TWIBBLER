@@ -33,7 +33,7 @@ public class Connection extends Thread {
 				fromWeb = new BufferedReader(new InputStreamReader(netClient.getInputStream()));
 				toWeb = new PrintWriter(netClient.getOutputStream(),true);
 				
-				System.out.println("netclient.close");
+				//System.out.println("netclient.close");
 				//System.out.println(e.getMessage());
 				//	netClient.close();
 			
@@ -71,7 +71,7 @@ public class Connection extends Thread {
 			toClient.close();
 			netClient.close(); 
 		}catch(NullPointerException e){
-			String web = new String();
+			String web;
 
             try {
                 if((web = fromWeb.readLine()) != null)
@@ -88,11 +88,20 @@ public class Connection extends Thread {
                 	if(web.contains("user="))
                 	{
                         toWeb.println(WebRequestHandler.getTwibbles(web, username));
-                        MySQLAccess.writeLog("WebBrowser-Request", "Successful print all twibbles");
+                        if(WebRequestHandler.userFound)
+                        {
+                            MySQLAccess.writeLog("WebBrowser-Request", "Successful print all twibbles");
+                        }
+                        else
+                        {
+                            MySQLAccess.writeLog("WebBrowser-Request", "ERROR : "+username+" not found");
+                        }
+
                 	}
                     else
                     {
                         toWeb.println(WebRequestHandler.getProfiles());
+
                         MySQLAccess.writeLog("WebBrowser-Request", "Successful print all Profiles");
                     }
 

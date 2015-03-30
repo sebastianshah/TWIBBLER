@@ -4,12 +4,16 @@ import network.query.MySQLAccess;
 import network.util.Profile;
 import network.util.TwibblePost;
 
+import javax.jws.soap.SOAPBinding;
 import java.util.List;
 
 /**
  * Created by michal on 3/16/2015.
  */
 public class WebRequestHandler {
+
+    //used to print error log
+    public static boolean userFound;
 
 
     public static String getTwibbles(String web, String username)
@@ -35,6 +39,9 @@ public class WebRequestHandler {
 
         if(!posts.isEmpty())
         {
+            userFound = true;
+
+
             httpmessage +="<div><table class='table table-striped text-center'>"
                     +"<tr>"
                     + "<td class='info' colspan='4'><h3 class='text-center'>" + username + " Twibbles feed" + "</h3></td>"
@@ -58,6 +65,9 @@ public class WebRequestHandler {
             }
         }
         else{
+
+            userFound = false;
+
             httpmessage +="<div><table class='table table-striped text-center'>"
                     +"<tr>"
                     + "<td class='danger' colspan='4'><h3 class='text-center'>ERROR: " + username + " NOT FOUND!  " + "</h3></td>"
