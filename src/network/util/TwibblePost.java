@@ -1,5 +1,9 @@
 package network.util;
 
+/**
+ * TwibblePost is used to store all the information send by a twibble message post
+ * It is used to send back the information from the database to the web
+ */
 public class TwibblePost {
 
 	private String username;

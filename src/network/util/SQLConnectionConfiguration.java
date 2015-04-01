@@ -4,7 +4,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 
 /**
- * Created by michal on 3/9/2015.
+ * CONFIG FILE for mysql database connection
  */
 public class SQLConnectionConfiguration {
 

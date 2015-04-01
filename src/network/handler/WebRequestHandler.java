@@ -16,6 +16,14 @@ public class WebRequestHandler {
     public static boolean userFound;
 
 
+    /**
+     *  This method search for the twibblers written by the uername and return a html page containing them
+     *  if the user isn't found in the database, a error page will be returned
+     *
+     * @param web string send by browser
+     * @param username
+     * @return correct html page with requested twibbles
+     */
     public static String getTwibbles(String web, String username)
     {
 
@@ -23,7 +31,7 @@ public class WebRequestHandler {
         String httpmessage = "";
 
 
-        httpmessage += "HTTP/1.1 200 Okay\r\nContent-Type: text/html; charset=ISO-8859-4 \r\n\r\n";
+        httpmessage += "HTTP/1.1 200 OK\r\nContent-Type: text/html; charset=ISO-8859-4 \r\n\r\n";
         httpmessage += "<!DOCTYPE html><html lang='en'> <head><title>Twibbler</title><link rel='stylesheet' type='text/css' href='//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css'>"
                 +"</head><body>"
                 + "<div class='container'>"
@@ -32,11 +40,10 @@ public class WebRequestHandler {
                 +"<br/>";
 
 
-        //System.out.println(username);
-        //System.out.println(username.length());
-        List<TwibblePost> posts = MySQLAccess.getTwibbler(username);
-        //System.out.println("size :" + posts.size());
 
+        List<TwibblePost> posts = MySQLAccess.getTwibbler(username);
+
+        //check if user is in the database
         if(!posts.isEmpty())
         {
             userFound = true;
@@ -53,13 +60,13 @@ public class WebRequestHandler {
                     + "<td><strong>Date</strong></td>"
                     + "</tr>";
 
-            for (int i = 0; i < posts.size(); i++) {
+            for (TwibblePost post : posts) {
 
                 httpmessage += "<tr>"
-                        + "<td>" + posts.get(i).getUsername() + "</td>"
-                        + "<td>" + posts.get(i).getId() + "</td>"
-                        + "<td>" + posts.get(i).getContent() + "</td>"
-                        + "<td>" + posts.get(i).getDatetime() + "</td>"
+                        + "<td>" + post.getUsername() + "</td>"
+                        + "<td>" + post.getId() + "</td>"
+                        + "<td>" + post.getContent() + "</td>"
+                        + "<td>" + post.getDatetime() + "</td>"
                         + "</tr>";
 
             }
@@ -81,14 +88,17 @@ public class WebRequestHandler {
     }
 
 
-
-
+    /**
+     * Search for all the available users that got a profile. Users can follow them.
+     *
+     * @return html page containing all the public profiles
+     */
     public static String getProfiles() {
         List<Profile> profiles = MySQLAccess.getProfiles();
 
         String message = "";
 
-        message += "HTTP/1.1 200 Okay\r\nContent-Type: text/html; charset=ISO-8859-4 \r\n\r\n";
+        message += "HTTP/1.1 200 OK\r\nContent-Type: text/html; charset=ISO-8859-4 \r\n\r\n";
         message += "<!DOCTYPE html><html lang='en'> <head><title>Twibbler</title><link rel='stylesheet' type='text/css' href='//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css'>"
                 +"</head><body>"
                 + "<div class='container'>"
@@ -106,14 +116,14 @@ public class WebRequestHandler {
                 + "<td></td>"
                 + "</tr>";
 
-        for (int i = 0; i < profiles.size(); i++) {
+        for (Profile profile : profiles) {
 
 
             message += "<tr>"
-                    + "<td>" + profiles.get(i).getUsername() + "</td>"
-                    + "<td>" + profiles.get(i).getLocation() + "</td>"
-                    + "<td>" + profiles.get(i).getInterest() + "</td>"
-                    + "<td><a href='user=" + profiles.get(i).getUsername() + "'>Show Twibblers</a> </td>"
+                    + "<td>" + profile.getUsername() + "</td>"
+                    + "<td>" + profile.getLocation() + "</td>"
+                    + "<td>" + profile.getInterest() + "</td>"
+                    + "<td><a href='user=" + profile.getUsername() + "'>Show Twibblers</a> </td>"
                     + "</tr>";
 
             //toWeb.print(profiles.get(i).getUsername());

@@ -13,13 +13,18 @@ import network.util.TwibblePost;
 
 /**
  * @author michal wozniak
- * @version 1.0
  */
 public class MySQLAccess {
 
     StringBuilder test = new StringBuilder();
 
 
+    /**
+     *  Authentication : if the username exist in the database, the user is given access to the system
+     *
+     * @param username
+     * @return successful/failure message
+     */
     public static String login(String username) {
         Connection con = null;
         PreparedStatement statement = null;
@@ -292,12 +297,10 @@ public class MySQLAccess {
         return message;
     }
 
-    // TODO must then send email to all subcriber
-
     /**
      * Insert new database twibble entry
      *
-     * @return
+     * @return successful/failure message
      */
     public static String postTwibble(String username, String content) {
         Connection con = null;
@@ -310,9 +313,7 @@ public class MySQLAccess {
         try {
             con = connect.getConnection();
 
-            //TODO create custom function just to do this external
-            //every user account will use a id number to track his twibblers
-            //count the number of twibbler a user has
+            //find the twibblers of current user, get the id of last twibble and store it in 'count'
             String queryCount = "SELECT Username,id  FROM twibble WHERE Username =?";
             statement = con.prepareStatement(queryCount);
             statement.setString(1, username);
@@ -321,10 +322,11 @@ public class MySQLAccess {
             if (result.isBeforeFirst()) {
                 result.last();
                 count = result.getInt("id");
-                System.out.println(count);
+                //System.out.println(count);
             }
             //end
 
+            //insert twibble
             String query = "INSERT INTO twibblerdata.twibble(username, datetime, content, id)" + "VALUES(?,?,?,?)";
             String mess = content;
             System.out.println(mess);
@@ -335,8 +337,6 @@ public class MySQLAccess {
             statement.setInt(4, count + 1);
             statement.executeUpdate();
 
-
-            //insert twibble
 
 
             //result message
@@ -361,6 +361,8 @@ public class MySQLAccess {
     }
 
     /**
+     * if UserToFollow has a profile then the user can become his follower
+     *
      * @param user         logged user
      * @param UserToFollow the user that he want to subscribe to
      * @return successful/failure message
@@ -417,6 +419,13 @@ public class MySQLAccess {
         return message;
     }
 
+    /**
+     * if the user is really following this user, then he unscribe himself from his follower list.
+     *
+     * @param user
+     * @param userToUnfollow
+     * @return
+     */
     public static String unSubscribe(String user, String userToUnfollow) {
         Connection con = null;
         PreparedStatement statement = null;
@@ -470,6 +479,13 @@ public class MySQLAccess {
         return message;
     }
 
+    /**
+     *  Verify if the selected Id exist, then delete the corresponding twibbler if it does
+     *
+     * @param user
+     * @param id
+     * @return
+     */
     public static String deleteTwibble(String user, int id) {
         Connection con = null;
         PreparedStatement statement = null;
@@ -522,6 +538,12 @@ public class MySQLAccess {
         return message;
     }
 
+    /**
+     * Get a list of all the user that have a profile ( they can be follow by other user)
+     *
+     * @param username
+     * @return a String of all the user id
+     */
     public static String getSubscribers(String username) {
         Connection con = null;
         PreparedStatement statement = null;
@@ -559,6 +581,10 @@ public class MySQLAccess {
         return result;
     }
 
+    /**
+     * Search for all public profile and store it in a profile List
+     * @return List of profile
+     */
     public static List<Profile> getProfiles() {
         Connection con = null;
         PreparedStatement statement = null;
@@ -610,6 +636,12 @@ public class MySQLAccess {
         }
     }
 
+    /**
+     * Get all the twibbler message from a specified user
+     *
+     * @param username
+     * @return Twibble list
+     */
     public static List<TwibblePost> getTwibbler(String username) {
         Connection con = null;
         PreparedStatement statement = null;
@@ -626,8 +658,6 @@ public class MySQLAccess {
             statement.setString(1, username);
             queryResult = statement.executeQuery();
 
-            //  TODO the return give a ResultSet object which the client will need to while output
-            //For testing
             while (queryResult.next()) {
 
                 TwibblePost newPost = new TwibblePost();
@@ -642,7 +672,6 @@ public class MySQLAccess {
                 twibblesList.add(newPost);
             }
 
-            //result message
 
         } catch (SQLException e) {
             //e.printStackTrace();
@@ -658,6 +687,12 @@ public class MySQLAccess {
         return twibblesList;
     }
 
+    /**
+     * Write a log of a event
+     *
+     * @param username
+     * @param message error/succefull message
+     */
     public static void writeLog(String username, String message) {
         Connection con = null;
         PreparedStatement statement = null;

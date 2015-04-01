@@ -1,5 +1,9 @@
 package network.util;
 
+/**
+ *  Profile  stored all the information about a profile
+ *  It is used to send back the information from the database to the web
+ */
 public class Profile {
 
 	private String username;
