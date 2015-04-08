@@ -662,9 +662,9 @@ public class MySQLAccess {
 
                 TwibblePost newPost = new TwibblePost();
                 newPost.setUsername(queryResult.getString("Username"));
-                System.out.println(queryResult.getString("Username") + "WAT");
+                //System.out.println(queryResult.getString("Username") + "WHAT");
                 newPost.setContent(queryResult.getString("Content"));
-                System.out.println(queryResult.getString("Content") + "watcontent");
+                //System.out.println(queryResult.getString("Content") + "whatcontent");
                 newPost.setId(queryResult.getInt("id"));
                 String date = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(queryResult.getTimestamp("DateTime"));
                 newPost.setDatetime(date);
