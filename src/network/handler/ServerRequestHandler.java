@@ -110,7 +110,7 @@ public class ServerRequestHandler {
 	
 	public static TwibblerMessage getUpdateProfileResponse(TwibblerMessage inputRequest) {
 		TwibblerMessage outputResponse = new TwibblerMessage(); 
-		outputResponse.setContent(MySQLAccess.updateProfile(inputRequest.getUsername(),inputRequest.getLocation(),inputRequest.getLocation()));
+		outputResponse.setContent(MySQLAccess.updateProfile(inputRequest.getUsername(),inputRequest.getLocation(),inputRequest.getInterest()));
 		
 		MySQLAccess.writeLog(inputRequest.getUsername(), outputResponse.getContent());
 		return outputResponse;
